@@ -12,7 +12,7 @@ import fastf1.plotting
 from fastf1.core import Laps
 
 
-fastf1.Cache.enable_cache('C:/Users/visha/Desktop/Play/f1/cache')   #setup cache
+fastf1.Cache.enable_cache('cache')   #setup cache
 
 # we only want support for timedelta plotting in this example
 fastf1.plotting.setup_mpl(mpl_timedelta_support=True, color_scheme=None, misc_mpl_mods=False)

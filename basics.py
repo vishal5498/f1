@@ -5,9 +5,12 @@ Created on Fri Mar 10 14:46:36 2023
 @author: visha
 """
 from matplotlib import pyplot as plt
+import matplotlib as mpl
 import fastf1
 import fastf1.plotting
 import pandas as pd
+from matplotlib.collections import LineCollection
+import numpy as np
 #%%
 fastf1.Cache.enable_cache('C:/Users/visha/Desktop/Play/f1/cache')   #setup cache
 fastf1.plotting.setup_mpl()                                         #setup matplotlib
@@ -99,4 +102,35 @@ print("-----")
 print(round(ham_tel[ham_tel['Throttle']<99]['Speed'].mean(),2))
 print(round(ver_tel[ver_tel['Throttle']<99]['Speed'].mean(),2))
 print(round(alo_tel[alo_tel['Throttle']<99]['Speed'].mean(),2))
+#%%
+import fastf1 as ff1
+year = 2021
+wknd = 9
+ses = 'R'
+driver = 'RIC'
+colormap = mpl.cm.plasma
+
+
+session = ff1.get_session(year, wknd, ses)
+weekend = session.event
+session.load()
+lap = session.laps.pick_driver("LEC").pick_fastest()
+# Get telemetry data
+x = lap.telemetry['X']              # values for x-axis
+y = lap.telemetry['Y']              # values for y-axis
+color = lap.telemetry['Speed']      # value to base color gradient on
+points = np.array([x, y]).T.reshape(-1, 1, 2)
+segments = np.concatenate([points[:-1], points[1:]], axis=1)
+# We create a plot with title and adjust some setting to make it look good.
+fig, ax = plt.subplots(sharex=True, sharey=True, figsize=(12, 6.75))
+fig.suptitle(f'Speed', size=24, y=0.97)
+
+# Adjust margins and turn of axis
+plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.12)
+ax.axis('off')
+
+
+# After this, we plot the data itself.
+# Create background track line
+ax.plot(lap.telemetry['X'], lap.telemetry['Y'], color='black', linestyle='-', linewidth=16, zorder=0)
 #%%
