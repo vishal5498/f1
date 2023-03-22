@@ -132,5 +132,5 @@ ax.axis('off')
 
 # After this, we plot the data itself.
 # Create background track line
-ax.plot(lap.telemetry['X'], lap.telemetry['Y'], color='black', linestyle='-', linewidth=16, zorder=0)
+ax.plot(lap.telemetry['X'], lap.telemetry['Y'], color='black', linestyle='-', linewidth=10, zorder=0)
 #%%

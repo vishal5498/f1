@@ -11,7 +11,11 @@ import pandas as pd
 from datetime import datetime
 from pandasql import sqldf
 import os
+import numpy as np
+import json
 import shutil
+track_figsizef = open('track_figsize.json')
+track_figsize = json.load(track_figsizef)
 #%%
 folderPath = 'cache';
 mysql = lambda q: sqldf(q, globals())       #setup sql
@@ -68,10 +72,27 @@ and the upcoming session is
       pd.to_datetime(upcoming_session['EventDate']).dt.date.iloc[0],
       ))
 session_name = previous_session['EventName'].iloc[0]
+location = previous_session['Location'].iloc[0]
 #%%
-event = fastf1.get_event(current_date.year, session_name)
-print(event)
 fastf1.Cache.enable_cache('cache')   #setup cache
+#%%
+#get qualifying session details of previous race
 session=fastf1.get_session(current_date.year, session_name,'Q')
 session.load()
+lap = session.laps.pick_fastest()
+#%%
+y = lap.telemetry['X']              # values for x-axis
+x = lap.telemetry['Y']              # values for y-axis
+points = np.array([x, y]).T.reshape(-1, 1, 2)
+segments = np.concatenate([points[:-1], points[1:]], axis=1)
+fig, ax = plt.subplots(sharex=True, sharey=True, figsize=tuple(map(float,track_figsize[location].split(', ')))
+)
+fig.set_facecolor('white')
+fig.suptitle(f'{session_name}', size=24, y=0.97, color='black')
+plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.12)
+ax.axis('off')
+
+ax.plot(lap.telemetry['X'], lap.telemetry['Y'], color='black', linestyle='-', linewidth=10, zorder=0)
+#%%
+track_figsizef.close()
 #%%
